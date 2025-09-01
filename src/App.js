@@ -1,23 +1,56 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
 
 function App() {
+  const [task, setTask] = useState('');
+  const [todos, setTodos] = useState([]);
+
+  const addTask = () => {
+    if (task) {
+      setTodos([...todos, { text: task, completed: false }]);
+      setTask('');
+    }
+  };
+
+  const toggleTaskCompletion = (index) => {
+    const newTodos = [...todos];
+    newTodos[index].completed = !newTodos[index].completed;
+    setTodos(newTodos);
+  };
+
+  const clearCompleted = () => {
+    setTodos(todos.filter(todo => !todo.completed));
+  };
+
+  const tasksCount = todos.filter(todo => !todo.completed).length;
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Todos</h1>
+      <input
+        type="text"
+        value={task}
+        onChange={(e) => setTask(e.target.value)}
+        placeholder="Введите новую задачу"
+      />
+      <button onClick={addTask}>Добавить задачу</button>
+      <div className="tasks__wrapper">
+        <h2>Общий список задач</h2>
+        <ul>
+          {todos.map((todo, index) => (
+            <li key={index} style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}>
+              <input
+                type="checkbox"
+                checked={todo.completed}
+                onChange={() => toggleTaskCompletion(index)}
+              />
+              {todo.text}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <h3>Количество оставшихся задач: {tasksCount}</h3>
+      <button onClick={clearCompleted}>Очистить выполненные</button>
     </div>
   );
 }
